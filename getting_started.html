@@ -31,15 +31,18 @@
 		  <li><a href="index.html" class="myButton">About</a></li>
 		  <li><a href="why.html" class="myButton">Why</a></li>
 		  <li><a href="getting_started.html" class="myButton">Getting Started</a></li>
+		  <li><a href="scopes.html" class="myButton">Scopes</a></li>
+		  <li><a href="rich_domain_objects.html" class="myButton">Rich Domain</a></li>
 		</ul>
 	  
       <section>
         <h1>
-<a id="divine-inject" class="anchor" href="#divine-inject" aria-hidden="true"><span class="octicon octicon-link"></span></a>Documentation</h1>
+<a id="divine-inject" class="anchor" href="#divine-inject" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting Started</h1>
 
 <p>
 This page explains how to use DivineInject for dependency injection. It assumes you already know
 <a href="http://stackoverflow.com/questions/130794/what-is-dependency-injection">what dependency injection is</a>.
+Basic usage of DivineInject boils down to two topics:
 
 	<ul>
 		<li><a href="#binding">Configuring bindings</li>
@@ -74,7 +77,7 @@ concrete type whenever it encounters a constructor argument of the interface typ
 
 <pre>
 DivineInjector.Current
-	.Bind&lt;IOrderService&gt;().To&lt;OrderService&gt;();
+	.Bind&lt;IOrdersService&gt;().To&lt;OrdersService&gt;();
 </pre>
 
 <p>
@@ -83,9 +86,9 @@ a constructor argument of the interface type.
 </p>
 
 <pre>
-var myOrderService = new OrderService(...);
+var myOrdersService = new OrdersService(...);
 DivineInjector.Current
-	.Bind&lt;IOrderService&gt;().ToInstance(myOrderService);
+	.Bind&lt;IOrdersService&gt;().ToInstance(myOrdersService);
 </pre>
 
 <h2>
@@ -124,9 +127,13 @@ private MainWindowViewModel CreateViewModel()
 <pre>
 public object GetInstance(InstanceContext instanceContext, Message message)
 {
-    return DivineInjector.Current.Get(m_instanceType);
+    return DivineInjector.Current.Get(_instanceType);
 }
 </pre>
+
+<hr/>
+
+<p>Having understood how to configure and create singleton objects, read more about <a href="scopes.html">scopes in DivineInject</a>.
 
       </section>
     </div>

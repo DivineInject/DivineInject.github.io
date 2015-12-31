@@ -1,0 +1,160 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Divineinject.GitHub.io by DivineInject</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-dark.css">
+	<link rel="stylesheet" href="stylesheets/buttons.css">
+	<link rel="stylesheet" href="stylesheets/nav.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="without-description">
+        <h1>DivineInject.GitHub.io</h1>
+        <p></p>
+        <p class="view"><a href="https://github.com/DivineInject">View the Project on GitHub <small>DivineInject</small></a></p>
+        <ul>
+          <li class="single"><a href="https://github.com/DivineInject/DivineInject.github.io">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+
+		<ul id="nav">
+		  <li><a href="index.html" class="myButton">About</a></li>
+		  <li><a href="why.html" class="myButton">Why</a></li>
+		  <li><a href="getting_started.html" class="myButton">Getting Started</a></li>
+		  <li><a href="scopes.html" class="myButton">Scopes</a></li>
+		  <li><a href="rich_domain_objects.html" class="myButton">Rich Domain</a></li>
+		</ul>
+	  
+      <section>
+        <h1>
+<a id="divine-inject" class="anchor" href="#divine-inject" aria-hidden="true"><span class="octicon octicon-link"></span></a>Rich Domain Objects</h1>
+
+<p>
+One of the big failings of many DI frameworks is they force separation of <i>behaviour</i> from <i>state</i>. This results in a sea of
+"NounVerbers" &mdash; OrderManager, OrderProcessor, OrderValueWithTaxAddedCalculator etc etc. While there are very good reasons to do
+this sometimes, most DI frameworks don't support the creation of objects that have both state and dependencies at all &mdash; DivineInject does.
+</p>
+
+<p>
+By creating an object that has both state and behaviour you can encapsulate behaviours of that object with methods. This makes code easier
+to understand and easier to test. Taken too far, you end up with god-classes that do everything; too far the other way, and you have an
+anemic domain model and behaviour introduced through a sea of hard-to-name global, static, methods (dependencies).
+</p>
+
+<h2>
+<a id="binding" class="anchor" href="#binding" aria-hidden="true"><span class="octicon octicon-link"></span></a>User Example</h2>
+
+<p>
+Continuing on from the <a href="scopes.html#userscope">user scope example</a> we created previously, we will add a <b>user id</b>.
+First, we introduce the new id into the User class:
+</p>
+
+<pre>
+internal class User
+{
+    private readonly Guid _userId;
+    private readonly IOrdersService _ordersService;
+
+    public User(Guid userId, IOrdersService ordersService)
+    {
+        _userId = userId;
+        _ordersService = ordersService;
+    }
+}
+</pre>
+
+<p>
+Second, we add the id to the user factory. Since the id isn't a dependency DivineInject won't pass it in, it must come from
+calling code:
+</p>
+
+<pre>
+internal interface IUserFactory
+{
+    User Create(Guid id);
+}
+</pre>
+
+<p>
+If we were to hand-code our user factory class, it would look like this (as before, this is just for illustration):
+</p>
+
+<pre>
+internal class DivineInjectUserFactory : IUserFactory
+{
+    public User Create(Guid id)
+    {
+        // DON'T DO THIS - just an example
+        var ordersService = DivineInjector.Current.Get&lt;IOrdersService&gt;();
+        return new User(id, ordersService);
+    }
+}
+</pre>
+
+<p>
+Our factory binding, however, is entirely unchanged:
+</p>
+
+<pre>
+DivineInjector.Current
+    .Bind&lt;IUserFactory&gt;().AsGeneratedFactoryFor&lt;User&gt;();
+</pre>
+
+<p>
+DivineInject is smart enough to associate the the Guid parameter passed in on the factory interface method with the
+Guid constructor argument; the second constructor argument, the dependency, is passed in by DivineInject &mdash; exactly
+as in the hand-rolled version.
+</p>
+
+<p>
+We can now use our updated user factory:
+</p>
+
+<pre>
+internal class LoginService
+{
+    private readonly IUserFactory _userFactory;
+    private readonly IAuthenticationService _authenticationService;
+
+    public LoginService(IUserFactory userFactory,
+                        IAuthenticationService authenticationService)
+    {
+        _userFactory = userFactory;
+        _authenticationService = authenticationService;
+    }
+
+    public User Login(string username, string password)
+    {
+        Guid userId;
+        if (!_authenticationService.TryAuthenticate(username, password, out userId))
+            return null;
+        return _userFactory.Create(userId);
+    }
+}
+</pre>
+
+<p>
+We have now created a rich domain object (User), which has both state (userId) and a dependency (IOrdersService). Our rich domain
+object can now introduce methods which take advantage of state and dependencies to provide a logical model of users in our domain.
+Or we may use it as a factory for other classes, to avoid the User class becoming god-like (e.g. IUserOrdersService).
+</p>
+
+      </section>
+    </div>
+    <footer>
+      <p>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></p>
+    </footer>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>

@@ -1,0 +1,151 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Divineinject.GitHub.io by DivineInject</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-dark.css">
+	<link rel="stylesheet" href="stylesheets/buttons.css">
+	<link rel="stylesheet" href="stylesheets/nav.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="without-description">
+        <h1>DivineInject.GitHub.io</h1>
+        <p></p>
+        <p class="view"><a href="https://github.com/DivineInject">View the Project on GitHub <small>DivineInject</small></a></p>
+        <ul>
+          <li class="single"><a href="https://github.com/DivineInject/DivineInject.github.io">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+
+		<ul id="nav">
+		  <li><a href="index.html" class="myButton">About</a></li>
+		  <li><a href="why.html" class="myButton">Why</a></li>
+		  <li><a href="getting_started.html" class="myButton">Getting Started</a></li>
+		  <li><a href="scopes.html" class="myButton">Scopes</a></li>
+		  <li><a href="rich_domain_objects.html" class="myButton">Rich Domain</a></li>
+		</ul>
+	  
+      <section>
+        <h1>
+<a id="divine-inject" class="anchor" href="#divine-inject" aria-hidden="true"><span class="octicon octicon-link"></span></a>Scopes</h1>
+
+<p>
+DivineInject only has one scope: singleton. This means that all dependencies managed by DivineInject are singleton instances, shared
+across your application. This would seem to force us to use only singletons across the application. However, it is quite likely you have objects 
+in your domain which are not singletons: User, Session, Order etc. How do we create these objects?
+</p>
+
+<h2>
+<a id="userscope" class="anchor" href="#userscope" aria-hidden="true"><span class="octicon octicon-link"></span></a>User Scope Example</h2>
+
+<p>
+For example, perhaps we have a notion of <i>user</i> in our domain. We have one instance of the User object per registered user, this class
+has dependencies, which are managed by DivineInject. It might look like this:
+</p>
+
+<pre>
+internal class User
+{
+    private readonly IOrdersService _ordersService;
+
+    public User(IOrdersService ordersService)
+    {
+        _ordersService = ordersService;
+    }
+}
+</pre>
+
+<p>
+We want to be able to create instances of this class, on demand. However, we don't want to break the "hollywood principle"
+(don't call us, we'll call you). To do this, we create a very simple factory interface, to create users:
+</p>
+
+<pre>
+internal interface IUserFactory
+{
+    User Create();
+}
+</pre>
+
+<p>
+We could implement this interface, by explicitly calling DivineInject:
+</p>
+
+<pre>
+internal class DivineInjectUserFactory : IUserFactory
+{
+    public User Create()
+    {
+        // DON'T DO THIS - just an example
+        var ordersService = DivineInjector.Current.Get&lt;IOrdersService&gt;();
+        return new User(ordersService);
+    }
+}
+</pre>
+
+<p>
+However, this is pretty horrible and would lead to references to DivineInject smeared all over your code, which we don't want.
+Instead, DivineInject can actually <b>generate</b> this class for you (at runtime). This is done when you configure the rest of your
+singleton bindings:
+<p>
+
+<pre>
+DivineInjector.Current
+    .Bind&lt;IUserFactory&gt;().AsGeneratedFactoryFor&lt;User&gt;();
+</pre>
+
+<p>
+Now if I have a class which needs to create a User object, I can depend on the IUserFactory dependency. For example:
+</p>
+
+<pre>
+internal class LoginService
+{
+    private readonly IUserFactory _userFactory;
+
+    public LoginService(IUserFactory userFactory)
+    {
+        _userFactory = userFactory;
+    }
+
+    public User Login(string username, string password)
+    {
+        // todo authentication
+        return _userFactory.Create();
+    }
+}
+</pre>
+
+<p>
+Each call to LoginService.Login will return me a newly created User object, with dependencies injected. This way I can create new
+scope objects, specific to my domain; the lifetime of these objects is clearly managed by my code, with no complex DI framework configuration
+to master.
+</p>
+
+<hr/>
+
+<p>
+Of course, the really interesting thing with having an object like this is that it might need some <i>state</i>. For example, my User
+class might need some kind of user id. How can we pass state into these objects? Doing this will make my User class a
+<a href="rich_domain_objects.html">rich domain object</a>.
+</p>
+
+      </section>
+    </div>
+    <footer>
+      <p>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></p>
+    </footer>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>

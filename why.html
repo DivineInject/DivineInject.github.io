@@ -31,13 +31,15 @@
 		  <li><a href="index.html" class="myButton">About</a></li>
 		  <li><a href="why.html" class="myButton">Why</a></li>
 		  <li><a href="getting_started.html" class="myButton">Getting Started</a></li>
+		  <li><a href="scopes.html" class="myButton">Scopes</a></li>
+		  <li><a href="rich_domain_objects.html" class="myButton">Rich Domain</a></li>
 		</ul>
 	  
       <section>
         <h1>
 <a id="divine-inject" class="anchor" href="#divine-inject" aria-hidden="true"><span class="octicon octicon-link"></span></a>Why?</h1>
 
-<p>Because dependency injection is important - but done wrong it can do more harm than good.
+<p>Why did we create DivineInject? Because dependency injection is important - but done wrong it can do more harm than good.
 DivineInject is opinionated about the right way to use dependency injection:</p>
 
 <ul>
@@ -70,7 +72,7 @@ constructor arguments, then maybe you should refactor the dependency so you can.
 <p>Dependencies are <b>external</b> to your application. Things like users and sessions are domain concepts in <i>your</i> domain, not in
 the domain of dependency injectors. All dependency injection frameworks get wrapped up in different scopes, which makes the frameworks harder to use. 
 Divine Inject simply doesn't support them &mdash; if you need something user-scoped or session-scoped, then implement the logic yourself. It isn't hard,
-and if you ever want to understand the lifecycle of your objects its in <i>your code</i>, not mine - which will make reasoning about your code or
+and if you ever want to understand the lifecycle of your objects it's in <i>your code</i>, not mine &mdash; which will make reasoning about your code or
 debugging it a million times easier.</p>
 
 <h2>
@@ -78,8 +80,8 @@ debugging it a million times easier.</p>
 
 <p>DivineInject borrows an idea from <a href="https://github.com/google/guice">Google Guice</a> - with Guice it is called "assisted injection", in
 DivineInject we call it <i>generated factory injection</i>. The idea is the same &mdash; providing a simple way to create objects with constructors
-which accept runtime arguments as well as dependencies to inject. This allows you to create rich, stateful domain objects which also have
-dependencies.</p>
+which accept runtime arguments as well as dependencies to inject. This allows you to create <a href="rich_domain_objects.html">rich, stateful 
+domain objects</a> which also have dependencies.</p>
 
 <hr/>
 
