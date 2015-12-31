@@ -7,9 +7,11 @@
 
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/github-dark.css">
+	<link rel="stylesheet" href="stylesheets/buttons.css">
+	<link rel="stylesheet" href="stylesheets/nav.css">
     <script src="javascripts/scale.fix.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-
+	
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
@@ -17,63 +19,57 @@
   <body>
     <div class="wrapper">
       <header class="without-description">
-        <h1>Divineinject.GitHub.io</h1>
+        <h1>DivineInject.GitHub.io</h1>
         <p></p>
         <p class="view"><a href="https://github.com/DivineInject">View the Project on GitHub <small>DivineInject</small></a></p>
         <ul>
           <li class="single"><a href="https://github.com/DivineInject/DivineInject.github.io">View On <strong>GitHub</strong></a></li>
         </ul>
       </header>
+
+		<ul id="nav">
+		  <li><a href="index.html" class="myButton">About</a></li>
+		  <li><a href="why.html" class="myButton">Why</a></li>
+		  <li><a href="getting_started.html" class="myButton">Getting Started</a></li>
+		</ul>
+	  
       <section>
         <h1>
 <a id="divine-inject" class="anchor" href="#divine-inject" aria-hidden="true"><span class="octicon octicon-link"></span></a>Divine Inject</h1>
 
 <p>DivineInject is a .net dependency injection framework, designed to be simple to use and easy to understand.</p>
 
+<p>See how to <a href="#quickstart">get started in 30 seconds</a>, find out <a href="why.html">why we created DivineInject</a> or
+<a href="getting_started.html">read more detailed documentation</a>.
+
 <h2>
-<a id="why" class="anchor" href="#why" aria-hidden="true"><span class="octicon octicon-link"></span></a>Why?</h2>
+<a id="quickstart" class="anchor" href="#quickstart" aria-hidden="true"><span class="octicon octicon-link"></span></a>Quick Start</h2>
 
-<p>Because dependency injection is important - but done wrong it can do more harm than good.
-DivineInject is opinionated about the right way to use dependency injection:</p>
+<p>First, install the nuget package:</p>
 
-<ul>
-<li>
-<p>Constructor injection or death</p>
+<pre>
+Install-Package DivineInject
+</pre>
 
-<p>No, setter injection is bad for your health, just say no</p>
-</li>
-<li>
-<p>Dependencies are singletons</p>
+<p>Second, wire up your dependencies:</p>
 
-<p>Dependencies are external to your application - your DI framework doesn't need to know about users or sessions or threads.</p>
-</li>
-<li>
-<p>Domain objects can be rich, too</p>
+<pre>
+DivineInjector.Current
+	.Bind&lt;IDatabaseProvider&gt;().To&lt;MSSQLDatabaseProvider&gt;()
+	.Bind&lt;IOrderService&gt;().To&lt;OrderService&gt;();
+</pre>
 
-<p>Your domain model doesn't have to be <a href="https://en.wikipedia.org/wiki/Anemic_domain_model">anemic</a></p>
-</li>
-</ul>
+<p>Third, create your root object:</p>
 
-<h3>
-<a id="constructor-injection" class="anchor" href="#constructor-injection" aria-hidden="true"><span class="octicon octicon-link"></span></a>Constructor Injection</h3>
+<pre>
+public object GetInstance(InstanceContext instanceContext, Message message)
+{
+    return DivineInjector.Current.Get(m_instanceType);
+}
+</pre>
 
-<p>Setter and method injection are much harder to get right - so DivineInject simply doesn't support them. If you can't implement your dependencies as 
-constructor arguments, then maybe you should refactor the dependency so you can.</p>
+<p><i>This is a snippet from a WCF service's IInstanceProvider implementation, other application types will obviously create their root object differently</i></p>
 
-<h3>
-<a id="singleton-dependencies" class="anchor" href="#singleton-dependencies" aria-hidden="true"><span class="octicon octicon-link"></span></a>Singleton Dependencies</h3>
-
-<p>All dependency injection frameworks get wrapped up in different scopes. These are almost always confusing and open to abuse - so DivineInject
-simply doesn't support them. With DivineInject all dependencies must be singletons. If you need a user- or session- or thread-specific dependency,
-then implement the dependency provider in your own code. It's not hard to write, but it's a lot easier to debug when the code is under your control.</p>
-
-<h3>
-<a id="rich-domain-objects" class="anchor" href="#rich-domain-objects" aria-hidden="true"><span class="octicon octicon-link"></span></a>Rich Domain Objects</h3>
-
-<p>DivineInject borrows an idea from <a href="https://github.com/google/guice">Google Guice</a> - with Guice it is called "assisted injection", in
-DivineInject we call it generated factory injection. The idea is the same - providing a simple way to create objects with constructors
-which accept runtime arguments as well as dependencies to inject. This allows you to create rich, stateful domain objects which also have
-dependencies.</p>
       </section>
     </div>
     <footer>

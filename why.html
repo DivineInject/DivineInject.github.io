@@ -1,0 +1,95 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Divineinject.GitHub.io by DivineInject</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-dark.css">
+	<link rel="stylesheet" href="stylesheets/buttons.css">
+	<link rel="stylesheet" href="stylesheets/nav.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="without-description">
+        <h1>DivineInject.GitHub.io</h1>
+        <p></p>
+        <p class="view"><a href="https://github.com/DivineInject">View the Project on GitHub <small>DivineInject</small></a></p>
+        <ul>
+          <li class="single"><a href="https://github.com/DivineInject/DivineInject.github.io">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+
+		<ul id="nav">
+		  <li><a href="index.html" class="myButton">About</a></li>
+		  <li><a href="why.html" class="myButton">Why</a></li>
+		  <li><a href="getting_started.html" class="myButton">Getting Started</a></li>
+		</ul>
+	  
+      <section>
+        <h1>
+<a id="divine-inject" class="anchor" href="#divine-inject" aria-hidden="true"><span class="octicon octicon-link"></span></a>Why?</h1>
+
+<p>Because dependency injection is important - but done wrong it can do more harm than good.
+DivineInject is opinionated about the right way to use dependency injection:</p>
+
+<ul>
+<li>
+<p><b>Constructor injection or death</b></p>
+
+<p>Setter injection is bad for your health, just say no</p>
+</li>
+<li>
+<p><b>Dependencies are singletons</b></p>
+
+<p>Dependencies are external to your application - your DI framework doesn't need to know about users or sessions or threads.</p>
+</li>
+<li>
+<p><b>Domain objects can be rich, too</b></p>
+
+<p>Your domain model doesn't have to be <a href="https://en.wikipedia.org/wiki/Anemic_domain_model">anemic</a></p>
+</li>
+</ul>
+
+<h2>
+<a id="constructor-injection" class="anchor" href="#constructor-injection" aria-hidden="true"><span class="octicon octicon-link"></span></a>Constructor Injection</h2>
+
+<p>Setter and method injection are much harder to get right - so DivineInject simply doesn't support them. If you can't implement your dependencies as 
+constructor arguments, then maybe you should refactor the dependency so you can.</p>
+
+<h2>
+<a id="singleton-dependencies" class="anchor" href="#singleton-dependencies" aria-hidden="true"><span class="octicon octicon-link"></span></a>Singleton Dependencies</h2>
+
+<p>Dependencies are <b>external</b> to your application. Things like users and sessions are domain concepts in <i>your</i> domain, not in
+the domain of dependency injectors. All dependency injection frameworks get wrapped up in different scopes, which makes the frameworks harder to use. 
+Divine Inject simply doesn't support them &mdash; if you need something user-scoped or session-scoped, then implement the logic yourself. It isn't hard,
+and if you ever want to understand the lifecycle of your objects its in <i>your code</i>, not mine - which will make reasoning about your code or
+debugging it a million times easier.</p>
+
+<h2>
+<a id="rich-domain-objects" class="anchor" href="#rich-domain-objects" aria-hidden="true"><span class="octicon octicon-link"></span></a>Rich Domain Objects</h2>
+
+<p>DivineInject borrows an idea from <a href="https://github.com/google/guice">Google Guice</a> - with Guice it is called "assisted injection", in
+DivineInject we call it <i>generated factory injection</i>. The idea is the same &mdash; providing a simple way to create objects with constructors
+which accept runtime arguments as well as dependencies to inject. This allows you to create rich, stateful domain objects which also have
+dependencies.</p>
+
+<hr/>
+
+<p>Find out more about these ideas in the detailed <a href="getting_started.html">getting started</a> guide.</p>
+      </section>
+    </div>
+    <footer>
+      <p>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></p>
+    </footer>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>

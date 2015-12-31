@@ -1,0 +1,139 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Divineinject.GitHub.io by DivineInject</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-dark.css">
+	<link rel="stylesheet" href="stylesheets/buttons.css">
+	<link rel="stylesheet" href="stylesheets/nav.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="without-description">
+        <h1>DivineInject.GitHub.io</h1>
+        <p></p>
+        <p class="view"><a href="https://github.com/DivineInject">View the Project on GitHub <small>DivineInject</small></a></p>
+        <ul>
+          <li class="single"><a href="https://github.com/DivineInject/DivineInject.github.io">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+
+		<ul id="nav">
+		  <li><a href="index.html" class="myButton">About</a></li>
+		  <li><a href="why.html" class="myButton">Why</a></li>
+		  <li><a href="getting_started.html" class="myButton">Getting Started</a></li>
+		</ul>
+	  
+      <section>
+        <h1>
+<a id="divine-inject" class="anchor" href="#divine-inject" aria-hidden="true"><span class="octicon octicon-link"></span></a>Documentation</h1>
+
+<p>
+This page explains how to use DivineInject for dependency injection. It assumes you already know
+<a href="http://stackoverflow.com/questions/130794/what-is-dependency-injection">what dependency injection is</a>.
+
+	<ul>
+		<li><a href="#binding">Configuring bindings</li>
+		<li><a href="#creating">Creating root objects</li>
+	</ul>
+</p>
+
+<!--
+	constructor selection
+-->
+
+<h2>
+<a id="binding" class="anchor" href="#binding" aria-hidden="true"><span class="octicon octicon-link"></span></a>Configuring Bindings</h2>
+
+<p>
+When DivineInject creates a new instance of a class it calls a constructor, each of the constructor arguments is a <i>dependency</i> of
+the class &mdash; something external to the class, for which an implementation must be provided. But how do we know which value to pass for each dependency? 
+This is controlled by the <i>bindings</i>.
+</p>
+
+<p>
+<b>Your bindings must be configured near the start of your application &mdash; e.g. in the main method or global.asax.</b>
+</p>
+
+<p>
+There are basically two ways to configure bindings with DivineInject.
+</p>
+
+<p>
+1) bind an interface to a concrete type. DivineInject will pass the same (singleton) instance of the given
+concrete type whenever it encounters a constructor argument of the interface type.</p>
+
+<pre>
+DivineInjector.Current
+	.Bind&lt;IOrderService&gt;().To&lt;OrderService&gt;();
+</pre>
+
+<p>
+2) bind an interface to a specific instance. DivineInject will pass the given instance whenever it encounters
+a constructor argument of the interface type.
+</p>
+
+<pre>
+var myOrderService = new OrderService(...);
+DivineInjector.Current
+	.Bind&lt;IOrderService&gt;().ToInstance(myOrderService);
+</pre>
+
+<h2>
+<a id="creating" class="anchor" href="#creating" aria-hidden="true"><span class="octicon octicon-link"></span></a>Creating Root Objects</h2>
+
+<p>
+DivineInject allows you to create a tree of objects &mdash; each object has references to dependencies, which in turn reference their own
+dependencies; forming a tree of objects. This tree is created starting with the <i>root object</i> &mdash; e.g. in a WPF
+application the root would be the outermost ViewModel; in a WCF application it would be the service class.
+</p>
+
+<p>
+The root object is created by calling DivineInject &mdash; any arguments the root object constructor requires are taken from the bindings.
+This should be the <u>only time</u> you explicitly call DivineInject to create objects.
+</p>
+
+<p>
+There are two ways of creating the root object:
+</p>
+
+<p>
+1) by explicit type:
+</p>
+
+<pre>
+private MainWindowViewModel CreateViewModel()
+{
+    return DivineInjector.Current.Get&lt;MainWindowViewModel&gt;();
+}
+</pre>
+
+<p>
+2) by passing the type as an argument:
+</p>
+
+<pre>
+public object GetInstance(InstanceContext instanceContext, Message message)
+{
+    return DivineInjector.Current.Get(m_instanceType);
+}
+</pre>
+
+      </section>
+    </div>
+    <footer>
+      <p>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></p>
+    </footer>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
